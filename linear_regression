@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 27 16:50:33 2022
+
+@author: garimasharma
+"""
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#%% 
+
+data = pd.read_csv('all_week.csv')
+
+data.head()
+
+data = data.dropna()
+
+training_data = data[:600]
+
+test_data = data[601:]
+
+#%% Collect X and Y, X is depth, Y is magnitude
+
+X = training_data['depth'].values
+Y = training_data['mag'].values
+
+#%% mean of X and mean of Y
+
+X_mean = np.mean(X)
+Y_mean = np.mean(Y)
+
+# total number of values 
+
+n = len(X)
+
+# Find the slope m 
+
+numer = 0
+denom = 0
+
+for i in range(n):
+    numer =  numer + ( X[i]-X_mean ) * (Y[i]-Y_mean)
+    denom = denom + (X[i]-X_mean) ** 2
+
+# slope 
+
+m = numer / denom
+
+# find y-intercept C = y - mx, y = y_mean, x = X-mean
+
+C = Y_mean - (m * X_mean)
+
+print(f"The slope of the line is {m} and the intercept is {C}")    
+
+
+#%% 
+
+
+
+#%% Now we know the slope, we can find Y_pred now
+Y_pred = []
+
+for i in range(n):
+    Y_pred.append(m * X[i] + C)
+
+# Error between Y_pred and Y
+
+error = []
+
+for i in range(n):
+    error.append(Y_pred[i]-Y[i])
+    
+# Lets find R-Square
+D_sum = 0
+for i in range(n):
+    D_sum = D_sum +  Y_pred[i] - Y_mean    
+    
+D_sum_squ = D_sum ** 2    
+    
+#
+
+    
+E_sum = 0
+for i in range(n):
+    E_sum = E_sum +  Y[i] - Y_mean    
+    
+E_sum_squ = E_sum ** 2    
+    
+#
+
+R = (D_sum/E_sum) ** 2
+
+print(f"The R-square value is {R}")
+
+
+    
+    
+
+    
+
+
